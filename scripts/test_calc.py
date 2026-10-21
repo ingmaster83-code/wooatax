@@ -9,6 +9,14 @@ for kind, p, v, js in rows:
     if kind == "acq": py = T.acquisition(p, bool(v))["total"]
     elif kind == "gift": py = T.gift_tax(p, v)["tax_filed"]
     elif kind == "inh": py = T.inherit_tax(p, v >= 10, v % 10)["tax_filed"]
+    elif kind == "cg":
+        py = T.capgain_general(p, "lt1" if v == "lt1" else "lt2" if v == "lt2" else "basic", 0 if v in ("lt1", "lt2") else int(v[1:]))["total"]
+    elif kind == "one":
+        pr, h, l = v.split(":"); py = T.capgain_onehouse(float(pr), p, int(h), int(l))["total"]
+    elif kind == "fl": py = T.freelancer(p * 5, v)["refund"]
+    elif kind == "it": py = T.income_tax(p)["total"]
+    elif kind == "vs": py = T.vat_from_supply(p)["total"]
+    elif kind == "vt": py = T.vat_from_total(p)["supply"]
     else: py = T.prop_tax(p, bool(v))["total"]
     if int(py) != int(js):
         bad += 1

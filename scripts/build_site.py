@@ -261,7 +261,7 @@ def hub_prop():
 # ───────────────────────── 계산기·기타 ─────────────────────────
 def page_calc():
     body = """
-<div class="page-head"><h1>부동산 세금 계산기 — 취득세·증여세·상속세·재산세</h1><p>입력한 값은 서버로 전송되지 않습니다</p></div>
+<div class="page-head"><h1>세금 계산기 — 취득세·증여세·상속세·재산세·양도세·종합소득세</h1><p>입력한 값은 서버로 전송되지 않습니다</p></div>
 <p class="lead">현행 세법의 일반 규정으로 계산한 참고용 추정치입니다. 금액은 <b>원 단위</b>로 입력하세요(예: 6억 5천만 원 → 650000000).</p>
 <div class="tool-box"><h3 style="margin-top:0">🏠 취득세 (주택 유상취득)</h3>
 <div class="tool-row"><div><label for="a-p">취득가액(원)</label><input id="a-p" type="number" value="650000000" style="width:170px"></div><div><label for="a-o">전용면적</label><select id="a-o"><option value="0">85㎡ 이하</option><option value="1">85㎡ 초과</option></select></div><button class="btn-p" id="a-go">계산</button></div><div class="tool-out" id="a-out">계산 결과가 여기에 표시됩니다.</div></div>
@@ -271,7 +271,7 @@ def page_calc():
 <div class="tool-row"><div><label for="i-p">상속재산(원)</label><input id="i-p" type="number" value="1500000000" style="width:170px"></div><div><label for="i-s">배우자</label><select id="i-s"><option value="0">없음</option><option value="1" selected>있음</option></select></div><div><label for="i-k">자녀 수</label><select id="i-k"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div><button class="btn-p" id="i-go">계산</button></div><div class="tool-out" id="i-out">계산 결과가 여기에 표시됩니다.</div></div>
 <div class="tool-box"><h3 style="margin-top:0">🏢 재산세 (주택)</h3>
 <div class="tool-row"><div><label for="p-p">공시가격(원)</label><input id="p-p" type="number" value="500000000" style="width:170px"></div><div><label for="p-h">구분</label><select id="p-h"><option value="1">1세대 1주택</option><option value="0">일반(다주택 등)</option></select></div><button class="btn-p" id="p-go">계산</button></div><div class="tool-out" id="p-out">계산 결과가 여기에 표시됩니다.</div></div>
-""" + ad() + """
+""" + __import__("pages_more").calc_boxes() + ad() + """
 <script src="/assets/js/calc.js"></script>
 """
     faq = [("계산 결과는 정확한가요?", "현행 세법의 일반 규정으로 계산한 참고용 추정치입니다. 감면·중과·재산 평가 등에 따라 실제 세액은 달라질 수 있습니다."), ("입력한 금액은 저장되나요?", "아니요. 모든 계산은 브라우저 안에서만 이루어지고 서버로 전송되지 않습니다.")]
@@ -286,14 +286,18 @@ def page_home():
 <a class="card" href="/gift/"><b>🎁 증여세</b><span>금액·받는 사람별 — 배우자 6억 공제</span></a>
 <a class="card" href="/inheritance/"><b>📜 상속세</b><span>일괄공제 5억·배우자공제 반영</span></a>
 <a class="card" href="/property-tax/"><b>🏢 재산세</b><span>공시가격별 — 1세대 1주택 특례</span></a>
+<a class="card" href="/capital-gains/"><b>🏷️ 양도소득세</b><span>보유 기간별 · 1세대 1주택 12억</span></a>
+<a class="card" href="/freelancer/"><b>🧑‍💻 프리랜서 3.3%</b><span>연 수입별 환급·추가 납부</span></a>
+<a class="card" href="/income-tax/"><b>🧾 종합소득세</b><span>과세표준별 세율·세금</span></a>
+<a class="card" href="/vat/"><b>🧮 부가세</b><span>공급가액·합계 10% 계산</span></a>
 <a class="card" href="/calculator/"><b>🧮 세금 계산기</b><span>직접 금액 입력</span></a>
 </div>
 <h2 class="group-title">🔥 많이 찾는 계산</h2>
-{chips([("취득세 6억", "/acquisition/6억/"), ("취득세 9억", "/acquisition/9억/"), ("증여세 1억", "/gift/1억/"), ("증여세 5억", "/gift/5억/"), ("상속세 10억", "/inheritance/10억/"), ("상속세 20억", "/inheritance/20억/"), ("재산세 공시가 5억", "/property-tax/5억/"), ("재산세 공시가 10억", "/property-tax/10억/")])}
+{chips([("취득세 6억", "/acquisition/6억/"), ("취득세 9억", "/acquisition/9억/"), ("증여세 1억", "/gift/1억/"), ("증여세 5억", "/gift/5억/"), ("상속세 10억", "/inheritance/10억/"), ("상속세 20억", "/inheritance/20억/"), ("재산세 공시가 5억", "/property-tax/5억/"), ("재산세 공시가 10억", "/property-tax/10억/"), ("양도세 5억", "/capital-gains/5억/"), ("프리랜서 3천만", "/freelancer/3천/"), ("부가세 100만", "/vat/100만/")])}
 <p class="lead">우아세금은 현행 세법의 일반 규정(공제·세율)을 적용해 금액별 부동산 세금을 계산해 두었습니다. 감면·중과·개인 사정은 반영하지 않으니 신고·납부 전에는 홈택스·위택스 모의계산과 세무 전문가 확인이 필요합니다. 자세한 기준은 <a href="/about/">계산 기준</a>을 참고하세요. 연봉 실수령액과 연말정산은 <a href="https://wooayeonbong.wooahouse.com">우아연봉</a>에서 확인하세요.</p>
 """
     faq = [("세금 계산 결과를 믿어도 되나요?", "현행 세법의 일반 규정으로 계산한 참고용 추정치입니다. 실제 세액은 감면·중과·재산 평가 등에 따라 달라질 수 있어 신고 전 확인이 필요합니다."), ("세법이 바뀌면 어떻게 되나요?", "세율·공제는 이 사이트의 계산 모듈 한 곳에서 관리하며 개정 시 갱신합니다. 다만 반영 시차가 있을 수 있습니다.")]
-    write("/", layout("/", "우아세금 — 취득세·증여세·상속세·재산세 금액별 계산 (2026)", "취득세, 증여세, 상속세, 재산세를 금액별로 계산해 둔 부동산 세금 계산 사이트. 현행 세법 기준 참고용 추정, 계산기 제공.", body, faq), "1.0")
+    write("/", layout("/", "우아세금 — 취득세·증여세·상속세·재산세·양도세 금액별 계산 (2026)", "취득세, 증여세, 상속세, 재산세, 양도소득세, 프리랜서 3.3%, 종합소득세, 부가세를 금액별로 계산해 둔 세금 계산 사이트. 현행 세법 기준 참고용 추정, 계산기 제공.", body, faq), "1.0")
 
 def page_about():
     body = """
@@ -302,6 +306,9 @@ def page_about():
 <h2 class="group-title">🎁 증여세</h2><p class="lead">증여재산공제(10년 합산): 배우자 6억, 직계존속→성년 자녀 5천만(미성년 2천만), 기타 친족 1천만, 혼인·출산 1억 추가. 과세표준 1억 이하 10%, 5억 이하 20%(누진공제 1천만), 10억 이하 30%(6천만), 30억 이하 40%(1억 6천만), 30억 초과 50%(4억 6천만). 기한 내 신고 시 산출세액 3% 공제. 재산 평가·부담부증여·합산과세는 반영하지 않았습니다.</p>
 <h2 class="group-title">📜 상속세</h2><p class="lead">일괄공제 5억 원과 (기초공제 2억+자녀공제 1인당 5천만 원) 중 큰 금액을 공제하고, 배우자가 있으면 법정상속분(배우자 1.5 : 자녀 1)만큼 상속받는다고 가정해 배우자공제(최소 5억~최대 30억)를 적용했습니다. 세율은 증여세와 같은 5단계 누진세율이며 신고세액공제 3%를 반영했습니다. 금융재산·동거주택 상속공제, 사전증여 합산은 제외했습니다. 상속세 개편(공제 상향 등)이 논의 중이어서 개정되면 결과가 달라집니다.</p>
 <h2 class="group-title">🏢 재산세</h2><p class="lead">주택 재산세: 공정시장가액비율 일반 60%, 1세대 1주택 43%(공시가 3억 이하)·44%(6억 이하)·45%(초과). 표준세율 6천만 원 이하 0.1%, 1.5억 이하 0.15%, 3억 이하 0.25%, 3억 초과 0.4%(누진공제 방식), 1세대 1주택 공시가 9억 이하 특례세율 0.05·0.1·0.2·0.35%. 도시지역분 과세표준의 0.14%, 지방교육세 재산세의 20%. 소방분 지역자원시설세와 종합부동산세는 포함하지 않았습니다.</p>
+<h2 class="group-title">🏷️ 양도소득세</h2><p class="lead">주택 양도 기준: 보유 1년 미만 70%, 1년 이상 2년 미만 60%, 2년 이상 소득세 기본세율(6~45%). 3년 이상 보유 시 장기보유특별공제 6%에서 매년 2%p 증가(15년 이상 30%), 양도소득 기본공제 250만 원, 지방소득세 10%. 1세대 1주택(보유 2년 이상)은 양도가 12억 원 이하 비과세, 초과분의 양도차익에만 과세하며 장기보유특별공제는 보유 연 4%(최대 40%)+거주 연 4%(최대 40%). 조정대상지역 다주택 중과, 비사업용 토지, 일시적 2주택 등 특례는 반영하지 않았습니다.</p>
+<h2 class="group-title">🧑‍💻 프리랜서 3.3%·종합소득세</h2><p class="lead">3.3%는 소득세 3%와 지방소득세 0.3%입니다. 정산은 연 수입에 경비율(30·50·70% 가정)을 적용한 사업소득금액에서 본인 기본공제 150만 원을 뺀 과세표준에 기본세율을 적용하고 표준세액공제 7만 원, 지방소득세 10%를 반영했습니다. 국민연금·건강보험료 소득공제, 부양가족, 기장세액공제는 반영하지 않아 실제 환급액은 더 클 수 있습니다.</p>
+<h2 class="group-title">🧮 부가가치세</h2><p class="lead">일반과세자 세율 10% 기준이며 간이과세자의 업종별 부가가치율 계산은 반영하지 않았습니다.</p>
 <h2 class="group-title">⚠️ 한계</h2><p class="lead">이 사이트의 계산은 일반 규정에 따른 참고용 추정입니다. 개인별 감면·중과·비과세, 재산 평가, 가산세, 지방자치단체 조례 등에 따라 실제 세액은 달라지며 세법은 수시로 개정됩니다. 신고·납부 전에 국세청 홈택스, 위택스 모의계산과 세무 전문가 상담으로 확인하세요.</p>
 <h2 class="group-title">📬 문의·정정</h2><p class="lead">오류 제보는 <a href="mailto:ingmaster83@gmail.com">ingmaster83@gmail.com</a> 으로 보내 주세요.</p>
 """
@@ -352,7 +359,9 @@ def main():
         page_inh(e)
         for sp, k in ISC: page_inh_sc(e, sp, k)
     for p in PROP: page_prop(p)
-    hub_acq(); hub_gift(); hub_inh(); hub_prop(); page_calc(); page_home(); page_about(); page_privacy()
+    hub_acq(); hub_gift(); hub_inh(); hub_prop()
+    import pages_more; print('more pages', pages_more.all_pages())
+    page_calc(); page_home(); page_about(); page_privacy()
     today = time.strftime("%Y-%m-%d")
     urls = "".join("<url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>" % (BASE, q(p), today, pr) for p, pr in WRITTEN)
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">%s</urlset>\n' % urls, encoding="utf-8")

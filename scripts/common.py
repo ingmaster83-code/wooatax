@@ -9,7 +9,7 @@ SITE = "우아세금"
 NAVER_TOKEN = "3549f2a333bf59af613486acb73cbc80d2131e6c"      # 네이버 서치어드바이저 메타태그 값 — 사용자 발급 후 입력
 esc = html.escape
 
-NAV = [("취득세", "/acquisition/"), ("증여세", "/gift/"), ("상속세", "/inheritance/"), ("재산세", "/property-tax/"), ("계산기", "/calculator/")]
+NAV = [("취득세", "/acquisition/"), ("증여세", "/gift/"), ("상속세", "/inheritance/"), ("재산세", "/property-tax/"), ("양도세", "/capital-gains/"), ("프리랜서 3.3%", "/freelancer/"), ("종합소득세", "/income-tax/"), ("부가세", "/vat/"), ("계산기", "/calculator/")]
 
 _JOSA = re.compile(r'(\S)((?:</[a-z]+>)*)(이\(가\)|은\(는\)|을\(를\)|과\(와\))')
 _DIG = {"0": True, "1": True, "2": False, "3": True, "4": False, "5": False, "6": True, "7": True, "8": True, "9": False}

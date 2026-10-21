@@ -89,6 +89,64 @@ def prop_tax(official, one_house):
     total = pt + urban + edu
     return dict(ratio=ratio, base=base, special=special, pt=pt, urban=urban, edu=edu, total=total, eff=(total / official * 100) if official else 0)
 
+# ── 소득세 기본세율(양도·종합소득 공통) ──
+INC_BR = [(14e6, 0.06, 0), (50e6, 0.15, 1.26e6), (88e6, 0.24, 5.76e6), (150e6, 0.35, 15.44e6), (300e6, 0.38, 19.94e6), (500e6, 0.40, 25.94e6), (1e9, 0.42, 35.94e6), (math.inf, 0.45, 65.94e6)]
+
+def inc_prog(tb):
+    if tb <= 0: return 0.0, 0.0
+    for lim, r, d in INC_BR:
+        if tb <= lim: return tb * r - d, r
+
+def income_tax(tb):
+    t, r = inc_prog(tb)
+    t = f10(t); local = f10(t * 0.1)
+    return dict(tb=tb, rate=r, tax=t, local=local, total=t + local, eff=((t + local) / tb * 100) if tb else 0)
+
+# ── 양도소득세(주택, 단기·장기보유) ──
+CG_BASIC = 2_500_000
+def ltd_general(years):
+    """일반 장기보유특별공제: 3년 6% + 매년 2%p, 최대 15년 30%"""
+    if years < 3: return 0.0
+    return min(0.06 + (min(years, 15) - 3) * 0.02, 0.30)
+
+def capgain_general(gain, mode, years=0):
+    """mode: lt1(1년 미만 70%) / lt2(1~2년 60%) / basic(2년 이상 기본세율). gain=양도차익"""
+    ltd = ltd_general(years) if mode == "basic" else 0.0
+    taxable = max(0, gain * (1 - ltd) - CG_BASIC)
+    if mode == "lt1": t, r = taxable * 0.70, 0.70
+    elif mode == "lt2": t, r = taxable * 0.60, 0.60
+    else: t, r = inc_prog(taxable)
+    t = f10(t); local = f10(t * 0.1)
+    return dict(ltd=ltd, taxable=taxable, rate=r, tax=t, local=local, total=t + local, eff=((t + local) / gain * 100) if gain else 0)
+
+def capgain_onehouse(price, gain, hold, live):
+    """1세대 1주택(보유 2년 이상) — 양도가 12억 이하 비과세, 초과분만 과세. 장특 보유 연 4%+거주 연 4%(각 최대 40%, 3년 이상)"""
+    if price <= 1_200_000_000:
+        return dict(exempt=True, taxable=0, ltd=0, rate=0, tax=0, local=0, total=0, eff=0, tg=0)
+    tg = gain * (price - 1_200_000_000) / price
+    ltd = (min(hold * 0.04, 0.40) + min(live * 0.04, 0.40)) if hold >= 3 else 0.0
+    taxable = max(0, tg * (1 - ltd) - CG_BASIC)
+    t, r = inc_prog(taxable)
+    t = f10(t); local = f10(t * 0.1)
+    return dict(exempt=False, tg=tg, taxable=taxable, ltd=ltd, rate=r, tax=t, local=local, total=t + local, eff=((t + local) / gain * 100) if gain else 0)
+
+# ── 프리랜서 3.3% 정산 ──
+def freelancer(income, exp_rate):
+    withheld = f10(income * 0.033)
+    bi = income * (1 - exp_rate)
+    tb = max(0, bi - 1_500_000)
+    t, r = inc_prog(tb)
+    t = max(0, f10(t) - 70_000)                      # 표준세액공제 7만원
+    local = f10(t * 0.1); total = t + local
+    return dict(withheld=withheld, bi=bi, tb=tb, rate=r, tax=t, local=local, total=total, refund=withheld - total)
+
+# ── 부가가치세(10%) ──
+def vat_from_supply(supply):
+    v = int(round(supply * 0.1)); return dict(supply=supply, vat=v, total=supply + v)
+
+def vat_from_total(total):
+    s = int(round(total / 1.1)); return dict(supply=s, vat=total - s, total=total)
+
 if __name__ == "__main__":
     import sys
     sys.stdout.reconfigure(encoding="utf-8")
