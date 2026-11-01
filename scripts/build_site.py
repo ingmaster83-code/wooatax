@@ -185,7 +185,7 @@ def page_inh(e):
 {nb}
 <h2 class="group-title">📌 알아두기</h2>
 <ul class="lead" style="margin-left:20px"><li>상속공제는 일괄공제 5억 원(또는 기초공제 2억+자녀공제 1인당 5천만 원 중 큰 금액)이며 배우자가 있으면 배우자 상속공제(최소 5억~최대 30억 원)가 더해집니다.</li><li>배우자공제는 법정상속분(배우자 1.5 : 자녀 1 비율)만큼 상속받는다고 가정해 계산했습니다.</li><li>순금융재산 상속공제(최대 2억), 동거주택 상속공제, 사전증여 합산(10년·5년), 재산 평가 방식에 따라 세액이 크게 달라집니다.</li><li>상속개시일(사망일)이 속한 달의 말일부터 6개월 이내에 신고하면 3% 세액공제를 받습니다.</li></ul>
-{chips([("상속세 금액별 표", "/inheritance/"), ("증여세", "/gift/"), ("상속세 계산기", "/calculator/")])}
+{chips([("상속세 금액별 표", "/inheritance/"), ("증여세", "/gift/"), ("상속세 계산기", "/calculator/"), ("🕊️ 전국 장례식장 찾기", "https://wooafuneral.wooahouse.com/region/"), ("장례 절차 안내", "https://wooafuneral.wooahouse.com/guide/process/")])}
 <div class="note-box">상속세 제도는 개편 논의가 진행 중입니다(공제 상향·과세 방식 변경 등). 이 페이지는 현행 세법 기준이며 개정되면 달라집니다.</div>
 """
     faq = [(f"{amt(e)} 상속세는 얼마인가요?", f"배우자 없이 자녀 2명이 상속하면 약 {won(r1['tax_filed'])}원, 배우자가 있고 자녀가 2명이면 약 {won(r2['tax_filed'])}원입니다(현행 공제 기준 추정)."),
@@ -204,7 +204,7 @@ def page_inh_sc(e, sp, k):
 {lead}
 {ad()}
 {t}
-{chips([(f"{amt(e)} 상속세(전체 경우)", f"/inheritance/{aslug(e)}/"), ("상속세 금액별 표", "/inheritance/"), ("상속세 계산기", "/calculator/")])}
+{chips([(f"{amt(e)} 상속세(전체 경우)", f"/inheritance/{aslug(e)}/"), ("상속세 금액별 표", "/inheritance/"), ("상속세 계산기", "/calculator/"), ("🕊️ 전국 장례식장 찾기", "https://wooafuneral.wooahouse.com/region/")])}
 <div class="note-box">금융재산·동거주택 공제와 사전증여 합산 등은 반영하지 않은 단순 추정입니다. 상속세는 개편 논의 중이므로 신고 전 최신 세법을 확인하세요.</div>
 """
     faq = [(f"{amt(e)} 상속세 {isc_name(sp, k)}는?", f"약 {won(r['tax_filed'])}원입니다(일괄공제{'·배우자공제' if sp else ''} 후, 신고세액공제 3% 반영)."), ("배우자공제는 어떻게 계산했나요?", "법정상속분(배우자 1.5 : 자녀 각 1)만큼 상속받는다고 가정하고 최소 5억~최대 30억 원 범위로 계산했습니다." if sp else "배우자가 없는 경우라 배우자공제는 적용하지 않았습니다.")]
