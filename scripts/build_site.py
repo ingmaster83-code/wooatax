@@ -290,10 +290,11 @@ def page_home():
 <a class="card" href="/freelancer/"><b>🧑‍💻 프리랜서 3.3%</b><span>연 수입별 환급·추가 납부</span></a>
 <a class="card" href="/income-tax/"><b>🧾 종합소득세</b><span>과세표준별 세율·세금</span></a>
 <a class="card" href="/vat/"><b>🧮 부가세</b><span>공급가액·합계 10% 계산</span></a>
+<a class="card" href="/car-tax/"><b>🚗 자동차세</b><span>배기량·차령별 — 2000cc 연 52만원</span></a>
 <a class="card" href="/calculator/"><b>🧮 세금 계산기</b><span>직접 금액 입력</span></a>
 </div>
 <h2 class="group-title">🔥 많이 찾는 계산</h2>
-{chips([("취득세 6억", "/acquisition/6억/"), ("취득세 9억", "/acquisition/9억/"), ("증여세 1억", "/gift/1억/"), ("증여세 5억", "/gift/5억/"), ("상속세 10억", "/inheritance/10억/"), ("상속세 20억", "/inheritance/20억/"), ("재산세 공시가 5억", "/property-tax/5억/"), ("재산세 공시가 10억", "/property-tax/10억/"), ("양도세 5억", "/capital-gains/5억/"), ("프리랜서 3천만", "/freelancer/3천/"), ("부가세 100만", "/vat/100만/")])}
+{chips([("취득세 6억", "/acquisition/6억/"), ("취득세 9억", "/acquisition/9억/"), ("증여세 1억", "/gift/1억/"), ("증여세 5억", "/gift/5억/"), ("상속세 10억", "/inheritance/10억/"), ("상속세 20억", "/inheritance/20억/"), ("재산세 공시가 5억", "/property-tax/5억/"), ("재산세 공시가 10억", "/property-tax/10억/"), ("양도세 5억", "/capital-gains/5억/"), ("프리랜서 3천만", "/freelancer/3천/"), ("부가세 100만", "/vat/100만/"), ("자동차세 2000cc", "/car-tax/2000/"), ("자동차세 1600cc", "/car-tax/1600/")])}
 <p class="lead">우아세금은 현행 세법의 일반 규정(공제·세율)을 적용해 금액별 부동산 세금을 계산해 두었습니다. 감면·중과·개인 사정은 반영하지 않으니 신고·납부 전에는 홈택스·위택스 모의계산과 세무 전문가 확인이 필요합니다. 자세한 기준은 <a href="/about/">계산 기준</a>을 참고하세요. 연봉 실수령액과 연말정산은 <a href="https://wooayeonbong.wooahouse.com">우아연봉</a>에서 확인하세요.</p>
 """
     faq = [("세금 계산 결과를 믿어도 되나요?", "현행 세법의 일반 규정으로 계산한 참고용 추정치입니다. 실제 세액은 감면·중과·재산 평가 등에 따라 달라질 수 있어 신고 전 확인이 필요합니다."), ("세법이 바뀌면 어떻게 되나요?", "세율·공제는 이 사이트의 계산 모듈 한 곳에서 관리하며 개정 시 갱신합니다. 다만 반영 시차가 있을 수 있습니다.")]
@@ -361,6 +362,7 @@ def main():
     for p in PROP: page_prop(p)
     hub_acq(); hub_gift(); hub_inh(); hub_prop()
     import pages_more; print('more pages', pages_more.all_pages())
+    import pages_car; print('car pages', pages_car.all_pages())
     page_calc(); page_home(); page_about(); page_privacy()
     today = time.strftime("%Y-%m-%d")
     urls = "".join("<url><loc>%s%s</loc><lastmod>%s</lastmod><priority>%s</priority></url>" % (BASE, q(p), today, pr) for p, pr in WRITTEN)
