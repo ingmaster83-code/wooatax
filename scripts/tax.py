@@ -89,6 +89,53 @@ def prop_tax(official, one_house):
     total = pt + urban + edu
     return dict(ratio=ratio, base=base, special=special, pt=pt, urban=urban, edu=edu, total=total, eff=(total / official * 100) if official else 0)
 
+# ── 종합부동산세(주택분, 2026년 납부분 현행법 기준 근사) ──
+# 공제 9억(1세대 1주택 12억), 공정시장가액비율 60%, 세율 2주택 이하 0.5~2.7% / 3주택 이상 0.5~5.0%,
+# 1세대 1주택 연령(60세 20%·65세 30%·70세 40%)·보유(5년 20%·10년 40%·15년 50%) 세액공제 합산 최대 80%, 농어촌특별세 종부세액의 20%.
+# 재산세 중복분 공제는 (공시가격-공제)/공시가격 비율로 단순화한 근사이고, 세부담 상한(150%)은 전년도 세액이 필요해 반영하지 않는다.
+JB_FMV = 0.60
+JB2 = [(3e8, .005), (6e8, .007), (12e8, .010), (25e8, .013), (50e8, .015), (94e8, .020), (math.inf, .027)]
+JB3 = [(3e8, .005), (6e8, .007), (12e8, .010), (25e8, .020), (50e8, .030), (94e8, .040), (math.inf, .050)]
+
+def jb_prog(tb, br):
+    tax, lo = 0.0, 0.0
+    for hi, r in br:
+        if tb <= lo: break
+        tax += (min(tb, hi) - lo) * r; lo = hi
+    return tax
+
+def jb_credit(age, hold):
+    a = 0.4 if age >= 70 else 0.3 if age >= 65 else 0.2 if age >= 60 else 0.0
+    h = 0.5 if hold >= 15 else 0.4 if hold >= 10 else 0.2 if hold >= 5 else 0.0
+    return min(0.8, a + h)
+
+def jongbu(h, mode, age=0, hold=0):
+    """h: 주택 공시가격 합계(원). mode: 'one' 1세대 1주택, 'multi2' 2주택(일반), 'multi3' 3주택 이상(중과). 반환 dict(총액=종부세+농특세)"""
+    ded = 12e8 if mode == "one" else 9e8
+    n = {"one": 1, "multi2": 2, "multi3": 3}[mode]
+    tb = int(max(0.0, (h - ded) * JB_FMV) // 10_000 * 10_000)
+    gross = f10(jb_prog(tb, JB3 if mode == "multi3" else JB2))
+    prop = prop_tax(h, True)["pt"] + prop_tax(h, True)["urban"] if n == 1 else n * (prop_tax(h / n, False)["pt"] + prop_tax(h / n, False)["urban"])
+    prop_total = prop_tax(h, True)["total"] if n == 1 else n * prop_tax(h / n, False)["total"]
+    dup = f10(prop * min(1.0, (h - ded) / h)) if h > ded else 0
+    base = max(0, gross - dup)
+    cr = jb_credit(age, hold) if mode == "one" else 0.0
+    final = f10(base * (1 - cr))
+    nong = f10(final * 0.2)
+    return dict(ded=ded, tb=tb, gross=gross, dup=dup, credit=cr, final=final, nong=nong, total=final + nong, prop=prop_total, holding=final + nong + prop_total)
+
+def jongbu_joint(h, age=0, hold=0):
+    """1주택 부부 공동명의(50:50). a: 각자 6억 공제(공동명의 방식), b: 1세대 1주택 특례 선택(주 소유자 12억 공제·연령·보유 공제)"""
+    half = h / 2.0
+    tb = int(max(0.0, (half - 6e8) * JB_FMV) // 10_000 * 10_000)
+    gross = f10(jb_prog(tb, JB2))
+    prop = prop_tax(h, True)
+    dup = f10((prop["pt"] + prop["urban"]) / 2 * min(1.0, (half - 6e8) / half)) if half > 6e8 else 0
+    each = max(0, gross - dup); a_final = each * 2
+    a_final = f10(a_final); a_nong = f10(a_final * 0.2)
+    b = jongbu(h, "one", age, hold)
+    return dict(a_final=a_final, a_total=a_final + a_nong, a_tb=tb, b=b)
+
 # ── 소득세 기본세율(양도·종합소득 공통) ──
 INC_BR = [(14e6, 0.06, 0), (50e6, 0.15, 1.26e6), (88e6, 0.24, 5.76e6), (150e6, 0.35, 15.44e6), (300e6, 0.38, 19.94e6), (500e6, 0.40, 25.94e6), (1e9, 0.42, 35.94e6), (math.inf, 0.45, 65.94e6)]
 
